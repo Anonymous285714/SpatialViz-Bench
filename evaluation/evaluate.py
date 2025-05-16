@@ -137,7 +137,7 @@ def evaluate(model_list, data, args):
         print(model)
         
         save_name = model.split('/')[-1]
-        save_path = f"{args.save_dir}/results_{save_name}.jsonl"
+        save_path = f"{args.results_dir}/results_{save_name}.jsonl"
         print(save_path)
 
         result_file = open(save_path, "w", encoding='utf-8')
@@ -206,7 +206,7 @@ def modify(args):
 
         save_name = model.split('/')[-1]
         
-        result_file_path = f"{args.save_dir}/results_{save_name}.jsonl"
+        result_file_path = f"{args.results_dir}/results_{save_name}.jsonl"
         if os.path.exists(result_file_path):
             print("loading existed result file......")
             results_data = load_jsonl(result_file_path)
@@ -215,7 +215,7 @@ def modify(args):
             evaluate([model], data, args)
             continue
         
-        save_path = f"{args.save_dir}/results_{save_name}_modify.jsonl"
+        save_path = f"{args.results_dir}/results_{save_name}_modify.jsonl"
         print(save_path)
         new_result_file = open(save_path, "w", encoding='utf-8')
         
@@ -362,11 +362,11 @@ def get_answer(file_path, args):
         counting[k]["acc"] = "{:.2f}".format(counting[k]["correct_num"] / counting[k]["total_num"] * 100)
     
     
-    os.makedirs(f"{args.save_dir}/samples", exist_ok=True)
-    os.makedirs(f"{args.save_dir}/counting", exist_ok=True)
+    os.makedirs(f"{args.results_dir}/samples", exist_ok=True)
+    os.makedirs(f"{args.results_dir}/counting", exist_ok=True)
     
-    dump_json(f"{args.save_dir}/samples/{file_path.split(os.sep)[-1][:-6]}_samples.json", {"Positives": positives, "Negatives": negatives})
-    dump_json(f"{args.save_dir}/counting/{file_path.split(os.sep)[-1][:-6]}_counting.json", counting)
+    dump_json(f"{args.results_dir}/samples/{file_path.split(os.sep)[-1][:-6]}_samples.json", {"Positives": positives, "Negatives": negatives})
+    dump_json(f"{args.results_dir}/counting/{file_path.split(os.sep)[-1][:-6]}_counting.json", counting)
         
 
 if __name__ == "__main__":
@@ -376,7 +376,7 @@ if __name__ == "__main__":
                         help="List of model names or local paths to the models")
     parser.add_argument('--benchmark_test_path', type=str, required=False, 
                         default="SpatialViz-Bench/SpatialViz_Bench_images")
-    parser.add_argument('--save_dir', type=str, required=False,
+    parser.add_argument('--results_dir', type=str, required=False,
                         default="SpatialViz-Bench/results")
     parser.add_argument('--qwen_key', type=str, required=False,
                         help="Your api key for Qwen models.")
@@ -393,6 +393,6 @@ if __name__ == "__main__":
     modify(args)
     
     
-    for result_file_path in os.listdir(args.save_dir):
-        get_answer(f"{args.save_dir}/{result_file_path}", args)
+    for result_file_path in os.listdir(args.results_dir):
+        get_answer(f"{args.results_dir}/{result_file_path}", args)
     
